@@ -24,3 +24,9 @@ build/
 .idea/
 .vscode/
 .DS_Store
+
+# Local environment and logs
+.env
+.env.*
+local.properties
+*.log
