@@ -1,0 +1,17 @@
+{
+  "name": "home-inventory",
+  "private": true,
+  "workspaces": [
+    "app",
+    "packages/*"
+  ],
+  "scripts": {
+    "test": "yarn workspace home-inventory-app test",
+    "typecheck": "yarn workspace home-inventory-app typecheck",
+    "test:rust": "cargo test --manifest-path core/Cargo.toml"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "packageManager": "yarn@3.6.4"
+}
