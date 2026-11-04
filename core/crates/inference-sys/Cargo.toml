@@ -4,6 +4,7 @@ description = "llama.cpp and whisper.cpp built from third_party/ against a singl
 version.workspace = true
 edition.workspace = true
 publish.workspace = true
+license.workspace = true
 links = "inference"
 
 [build-dependencies]

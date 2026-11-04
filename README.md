@@ -185,7 +185,8 @@ Run these after `source scripts/lib/env.sh`:
 
 ## Licenses
 
-No license has been chosen for this repository yet. Third-party components:
+This project is licensed under the [Apache License 2.0](LICENSE). Third-party components
+keep their own licenses:
 
 - llama.cpp, whisper.cpp, ggml — MIT
 - Duckling Rust port — BSD-3-Clause
