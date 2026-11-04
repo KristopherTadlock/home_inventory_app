@@ -72,7 +72,36 @@ def enableProguardInReleaseBuilds = false
  */
 def jscFlavor = 'io.github.react-native-community:jsc-android:2026004.+'
 
+/**
+ * The models fetched by scripts/fetch-models.sh are packaged uncompressed under
+ * assets/models/. Build with -PbundleModels=false to leave them out.
+ */
+def bundleModels = (findProperty("bundleModels") ?: "true").toBoolean()
+def modelsDir = file("$rootDir/../../models")
+def modelAssetsDir = layout.buildDirectory.dir("generated/modelAssets")
+
+def copyModelAssets = tasks.register("copyModelAssets", Copy) {
+    def lock = new groovy.json.JsonSlurper().parse(new File(modelsDir, "models.lock.json"))
+    def files = lock.models.collect { it.file }
+    doFirst {
+        def missing = files.findAll { !new File(modelsDir, it).exists() }
+        if (!missing.isEmpty()) {
+            throw new GradleException("Missing models ${missing}: run scripts/fetch-models.sh or build with -PbundleModels=false")
+        }
+    }
+    from(modelsDir) { include files }
+    into(modelAssetsDir.map { it.dir("models") })
+}
+
 android {
+    androidResources {
+        noCompress += ["bin", "gguf"]
+    }
+    if (bundleModels) {
+        sourceSets.main.assets.srcDirs += modelAssetsDir
+        preBuild.dependsOn(copyModelAssets)
+    }
+
     ndkVersion rootProject.ext.ndkVersion
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
