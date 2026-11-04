@@ -1,0 +1,10 @@
+rust:
+  directory: ../../core
+  manifestPath: crates/inventory-core/Cargo.toml
+
+android:
+  targets:
+    - arm64-v8a
+    - x86_64
+  apiLevel: 24
+  useSharedLibrary: false

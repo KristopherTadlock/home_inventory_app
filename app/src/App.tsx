@@ -1,7 +1,12 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
+import { selfCheck } from 'core-bridge';
 
 function App(): React.JSX.Element {
+  useEffect(() => {
+    console.log('core self-check', selfCheck());
+  }, []);
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Hello World</Text>

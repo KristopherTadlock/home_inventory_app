@@ -1,0 +1,5 @@
+# Rust static libraries copied in by `ubrn build android`
+*.a
+android/src/main/jniLibs/
+android/build/
+android/.cxx/
