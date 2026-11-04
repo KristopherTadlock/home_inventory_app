@@ -1,0 +1,17 @@
+[package]
+name = "inventory-core"
+description = "On-device core of OPT Home Inventory, exported to React Native through uniffi."
+version.workspace = true
+edition.workspace = true
+publish.workspace = true
+
+[lib]
+name = "inventory_core"
+crate-type = ["lib", "staticlib"]
+
+[dependencies]
+chrono = "0.4"
+duckling = "=0.4.0"
+inference-sys = { path = "../inference-sys" }
+rusqlite = { version = "0.41", features = ["bundled"] }
+uniffi = "0.31.2"

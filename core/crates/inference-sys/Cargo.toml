@@ -1,0 +1,10 @@
+[package]
+name = "inference-sys"
+description = "llama.cpp and whisper.cpp built from third_party/ against a single ggml, with raw FFI bindings."
+version.workspace = true
+edition.workspace = true
+publish.workspace = true
+links = "inference"
+
+[build-dependencies]
+cmake = "0.1"

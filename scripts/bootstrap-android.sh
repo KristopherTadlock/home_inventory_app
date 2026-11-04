@@ -79,7 +79,7 @@ fi
 
 step "cargo-ndk $CARGO_NDK_VERSION"
 if ! cargo ndk --version 2>/dev/null | grep -q "$CARGO_NDK_VERSION"; then
-    cargo install cargo-ndk --version "$CARGO_NDK_VERSION" --locked
+    (cd "$REPO_ROOT" && cargo install cargo-ndk --version "$CARGO_NDK_VERSION" --locked)
 fi
 
 if $WITH_E2E; then
