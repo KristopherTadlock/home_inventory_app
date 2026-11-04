@@ -1,0 +1,26 @@
+# JavaScript
+node_modules/
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+coverage/
+
+# Rust
+core/target/
+
+# Models are downloaded by scripts/fetch-models.sh (see models/models.lock.json)
+models/*
+!models/models.lock.json
+
+# Build outputs
+build/
+*.apk
+*.aab
+
+# Editors and OS
+.idea/
+.vscode/
+.DS_Store
