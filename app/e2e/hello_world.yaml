@@ -1,0 +1,5 @@
+appId: com.opt.homeinventory
+---
+- launchApp:
+    clearState: true
+- assertVisible: "Hello World"

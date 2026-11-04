@@ -4,7 +4,7 @@ import { selfCheck } from 'core-bridge';
 
 function App(): React.JSX.Element {
   useEffect(() => {
-    console.log('core self-check', selfCheck());
+    console.log('core self-check', JSON.stringify(selfCheck()));
   }, []);
 
   return (

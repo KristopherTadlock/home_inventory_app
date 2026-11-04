@@ -6,9 +6,11 @@
     "packages/*"
   ],
   "scripts": {
+    "build:android": "scripts/build-android.sh",
     "test": "yarn workspace home-inventory-app test",
-    "typecheck": "yarn workspace home-inventory-app typecheck",
-    "test:rust": "cargo test --manifest-path core/Cargo.toml"
+    "test:rust": "cargo test --manifest-path core/Cargo.toml",
+    "test:e2e": "scripts/e2e-android.sh",
+    "typecheck": "yarn workspace home-inventory-app typecheck"
   },
   "engines": {
     "node": ">=20"
