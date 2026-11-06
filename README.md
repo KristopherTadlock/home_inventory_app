@@ -6,9 +6,10 @@ they expire next Friday", "I used the last of the rice", "what expires this week
 it updates the inventory or answers the question. Everything runs on the device: speech
 recognition, language understanding, date resolution and storage all work offline.
 
-> **Status: initial scaffold.** The app shows "Hello World". Every native dependency is
-> downloaded, compiled and linked into the Android build, and a startup self-check calls
-> each one, but no inventory features exist yet.
+> **Status: manual inventory.** The Android app lists the inventory with search, adds
+> items through a form, and opens an item when it is tapped to edit or delete it; items
+> are stored in SQLite by the Rust core. The chat box at the bottom accepts text but does
+> not act on it yet: natural-language requests (Llama) and speech input are still to come.
 
 Built with Llama.
 
@@ -71,17 +72,50 @@ native code uses the shared `c++_shared` runtime, the same one React Native uses
 
 ```
 app/                    React Native app (Android project in app/android, iOS in app/ios)
-  src/App.tsx           the Hello World screen; calls selfCheck() at startup
-  __tests__/            Jest tests
+  src/App.tsx           wires the Rust core and native host into AppRoot; logs selfCheck()
+  src/AppRoot.tsx       platform-independent root: inventory screen or storage error screen
+  src/features/inventory/
+    InventoryScreen.tsx search bar, item list, chat bar and the add/edit item sheet
+    components/         presentational components (props only)
+    hooks/              state: search and list loading, add/edit item form
+    domain/             date formatting and form validation (pure functions)
+    data/               InventoryRepository interface, Rust core adapter, storage guard
+  src/components/       generic UI building blocks
+  src/errors/           fatal storage error store and screen
+  src/platform/         the only platform-specific code: AppHost Turbo Module spec
+                        (database directory, exit); Android side in app/android/.../AppHost*.kt
+  src/theme/            design tokens
+  __tests__/            Jest tests (support/ holds an in-memory repository)
   e2e/                  Maestro end-to-end flows
 packages/core-bridge/   generated Turbo Module (regenerate with `yarn ubrn:android`)
 core/                   Rust workspace
-  crates/inventory-core uniffi-exported API: self_check(), probe_models()
+  crates/inventory-core uniffi-exported API: Inventory (open, add_item, update_item,
+                        delete_item, list_items, set_item_quantity, list_locations),
+                        parse_expiration_date(),
+                        self_check(), probe_models()
   crates/inference-sys  llama.cpp + whisper.cpp superbuild and FFI
 third_party/            llama.cpp and whisper.cpp (git submodules, pinned tags)
 models/                 models.lock.json; model files are downloaded here, never committed
 scripts/                bootstrap, model fetch, build and E2E scripts
 ```
+
+## Inventory data
+
+Items live in one SQLite table, `items`, created by the migrations in
+`core/crates/inventory-core/src/db/migrations.rs` (`PRAGMA user_version` tracks the
+schema version):
+
+| Column | Type | Notes |
+|---|---|---|
+| `id` | integer, `AUTOINCREMENT` | Never reused, so a stale id (e.g. from a pending Llama action) fails with `NotFound` instead of changing another item. |
+| `name` | text, required | The item, e.g. "Milk 1 gallon". Search matches any part of it, case-insensitively. |
+| `location` | text, required | Free text; a location matching an existing one case-insensitively reuses its spelling. |
+| `quantity` | integer ≥ 1, default 1 | An item whose quantity reaches 0 is deleted (`set_item_quantity(id, 0)`), never stored as 0. |
+| `expiration_date` | `YYYY-MM-DD` or NULL | NULL means the item does not expire. |
+| `created_date` | UTC timestamp | Set by SQLite on insert; shown as "Added …" in the list. |
+
+The Rust core validates every write and SQLite `CHECK` constraints back it up. If storage
+is unavailable or any read or write fails, the app shows an error screen and closes.
 
 ## Building for Android
 
@@ -138,9 +172,9 @@ Run these after `source scripts/lib/env.sh`:
 
 | Command | What it runs |
 |---|---|
-| `yarn test` | Jest + React Native Testing Library (native module mocked) |
+| `yarn test` | Jest + React Native Testing Library: screens, form, storage failure handling (in-memory repository; native modules mocked) |
 | `yarn typecheck` | TypeScript over the app and the generated bindings |
-| `yarn test:rust` | Rust unit tests on the host: SQLite, Duckling date phrases, both engines |
+| `yarn test:rust` | Rust unit tests on the host: schema, migrations, inventory queries and storage failures, Duckling date phrases, both engines |
 | `cargo test --manifest-path core/Cargo.toml -- --ignored` | Loads the real models (needs `scripts/fetch-models.sh`) |
 | `yarn test:e2e` | Boots a headless emulator, installs the release APK, runs the Maestro flows in `app/e2e/` and checks the on-device self-check log (needs `bootstrap-android.sh --e2e`, KVM on Linux) |
 

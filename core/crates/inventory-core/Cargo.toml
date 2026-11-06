@@ -15,4 +15,8 @@ chrono = "0.4"
 duckling = "=0.4.0"
 inference-sys = { path = "../inference-sys" }
 rusqlite = { version = "0.41", features = ["bundled"] }
+thiserror = "2"
 uniffi = "0.31.2"
+
+[dev-dependencies]
+tempfile = "3"

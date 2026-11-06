@@ -1,12 +1,19 @@
-//! On-device core exported to React Native through uniffi. Inventory logic comes later;
-//! for now the API proves that every native dependency is linked and callable.
+//! On-device core exported to React Native through uniffi: the home inventory stored in
+//! SQLite, date phrase resolution, and a self-check proving every native dependency is
+//! linked and callable.
 
 use std::path::Path;
 
-use chrono::{DateTime, FixedOffset, Utc};
-use duckling::{
-    Context, DimensionKind, DimensionValue, Lang, Locale, Options, TimePoint, TimeValue, parse,
-};
+use chrono::Utc;
+
+mod dates;
+mod db;
+mod error;
+mod inventory;
+
+pub use dates::parse_expiration_date;
+pub use error::{InventoryError, ItemField};
+pub use inventory::{Inventory, Item, NewItem};
 
 uniffi::setup_scaffolding!();
 
@@ -24,7 +31,7 @@ pub struct SelfCheck {
 pub fn self_check() -> SelfCheck {
     SelfCheck {
         sqlite_version: sqlite_version().unwrap_or_else(|e| format!("error: {e}")),
-        duckling_tomorrow: resolve_date("tomorrow", Utc::now().fixed_offset()),
+        duckling_tomorrow: dates::resolve_date("tomorrow", Utc::now().fixed_offset()),
         llama_system_info: inference_sys::llama_system_info(),
         whisper_system_info: inference_sys::whisper_system_info(),
     }
@@ -50,59 +57,14 @@ fn sqlite_version() -> rusqlite::Result<String> {
         .query_row("SELECT sqlite_version()", [], |row| row.get(0))
 }
 
-/// Resolves an English date expression to `YYYY-MM-DD` relative to `now`.
-fn resolve_date(text: &str, now: DateTime<FixedOffset>) -> Option<String> {
-    let locale = Locale::new(Lang::EN, None);
-    let context = Context::new(now, locale);
-    let entity = parse(
-        text,
-        &locale,
-        &[DimensionKind::Time],
-        &context,
-        &Options::default(),
-    )
-    .into_iter()
-    .next()?;
-    match entity.value {
-        DimensionValue::Time(TimeValue::Single { value, .. }) => Some(match value {
-            TimePoint::Naive { value, .. } => value.date().to_string(),
-            TimePoint::Instant { value, .. } => value.date_naive().to_string(),
-        }),
-        _ => None,
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
     use std::path::PathBuf;
 
-    fn tuesday_3_nov_2026() -> DateTime<FixedOffset> {
-        DateTime::parse_from_rfc3339("2026-11-03T10:00:00-08:00").unwrap()
-    }
-
     #[test]
     fn sqlite_is_bundled() {
         assert!(sqlite_version().unwrap().starts_with("3."));
-    }
-
-    #[test]
-    fn duckling_resolves_expiry_phrases() {
-        let now = tuesday_3_nov_2026();
-        assert_eq!(resolve_date("tomorrow", now).as_deref(), Some("2026-11-04"));
-        assert_eq!(
-            resolve_date("next Friday", now).as_deref(),
-            Some("2026-11-13")
-        );
-        assert_eq!(
-            resolve_date("in 3 weeks", now).as_deref(),
-            Some("2026-11-24")
-        );
-        assert_eq!(
-            resolve_date("5 Jan 2027", now).as_deref(),
-            Some("2027-01-05")
-        );
-        assert_eq!(resolve_date("no date here", now), None);
     }
 
     #[test]

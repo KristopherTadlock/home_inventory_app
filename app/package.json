@@ -12,9 +12,11 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@react-native-community/datetimepicker": "^9.2.2",
     "core-bridge": "workspace:*",
     "react": "19.2.0",
-    "react-native": "0.83.10"
+    "react-native": "0.83.10",
+    "react-native-safe-area-context": "^5.11.1"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
@@ -41,5 +43,13 @@
   },
   "installConfig": {
     "hoistingLimits": "workspaces"
+  },
+  "codegenConfig": {
+    "name": "AppHostSpec",
+    "type": "modules",
+    "jsSrcsDir": "src/platform",
+    "android": {
+      "javaPackageName": "com.opt.homeinventory"
+    }
   }
 }

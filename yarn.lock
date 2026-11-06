@@ -2118,6 +2118,25 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@react-native-community/datetimepicker@npm:^9.2.2":
+  version: 9.2.2
+  resolution: "@react-native-community/datetimepicker@npm:9.2.2"
+  dependencies:
+    invariant: ^2.2.4
+  peerDependencies:
+    expo: ">=52.0.0"
+    react: "*"
+    react-native: "*"
+    react-native-windows: "*"
+  peerDependenciesMeta:
+    expo:
+      optional: true
+    react-native-windows:
+      optional: true
+  checksum: f45e6415b7ab006b2c06969bab9e7484257926fad18e9276ce89360a9b2f3a1af32da4494e96f1fd3d0263651a535aa9e74254b28020aefe9221a296f8a78764
+  languageName: node
+  linkType: hard
+
 "@react-native/assets-registry@npm:0.83.10":
   version: 0.83.10
   resolution: "@react-native/assets-registry@npm:0.83.10"
@@ -5022,6 +5041,7 @@ __metadata:
     "@react-native-community/cli": 20.0.0
     "@react-native-community/cli-platform-android": 20.0.0
     "@react-native-community/cli-platform-ios": 20.0.0
+    "@react-native-community/datetimepicker": ^9.2.2
     "@react-native/babel-preset": 0.83.10
     "@react-native/eslint-config": 0.83.10
     "@react-native/metro-config": 0.83.10
@@ -5035,6 +5055,7 @@ __metadata:
     prettier: 2.8.8
     react: 19.2.0
     react-native: 0.83.10
+    react-native-safe-area-context: ^5.11.1
     test-renderer: ^1.0.0
     typescript: ^5.8.3
   languageName: unknown
@@ -7347,6 +7368,16 @@ __metadata:
   version: 16.13.1
   resolution: "react-is@npm:16.13.1"
   checksum: f7a19ac3496de32ca9ae12aa030f00f14a3d45374f1ceca0af707c831b2a6098ef0d6bdae51bd437b0a306d7f01d4677fcc8de7c0d331eb47ad0f46130e53c5f
+  languageName: node
+  linkType: hard
+
+"react-native-safe-area-context@npm:^5.11.1":
+  version: 5.11.1
+  resolution: "react-native-safe-area-context@npm:5.11.1"
+  peerDependencies:
+    react: "*"
+    react-native: "*"
+  checksum: 74af6238b940bdce605f3bfbd19d1f552f2c3a3851f70a42160c85b7c1b06a3710651c40d2234b0088121ec5eb5f8c55296301c6acfd6c11781b1790629d3df2
   languageName: node
   linkType: hard
 

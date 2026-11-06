@@ -95,12 +95,34 @@ typedef struct UniffiForeignFutureResultVoid {
 } UniffiForeignFutureResultVoid;
 typedef void (*UniffiForeignFutureCompleteVoid)(
     uint64_t callback_data, UniffiForeignFutureResultVoid result);
+/*handle*/ uint64_t uniffi_inventory_core_fn_clone_inventory(
+    /*handle*/ uint64_t handle, RustCallStatus *uniffi_out_err);
+void uniffi_inventory_core_fn_free_inventory(
+    /*handle*/ uint64_t handle, RustCallStatus *uniffi_out_err);
+/*handle*/ uint64_t uniffi_inventory_core_fn_constructor_inventory_open(
+    RustBuffer path, RustCallStatus *uniffi_out_err);
+RustBuffer uniffi_inventory_core_fn_method_inventory_add_item(
+    /*handle*/ uint64_t ptr, RustBuffer item, RustCallStatus *uniffi_out_err);
+void uniffi_inventory_core_fn_method_inventory_delete_item(
+    /*handle*/ uint64_t ptr, int64_t id, RustCallStatus *uniffi_out_err);
+RustBuffer uniffi_inventory_core_fn_method_inventory_list_items(
+    /*handle*/ uint64_t ptr, RustBuffer query, RustCallStatus *uniffi_out_err);
+RustBuffer uniffi_inventory_core_fn_method_inventory_list_locations(
+    /*handle*/ uint64_t ptr, RustCallStatus *uniffi_out_err);
+RustBuffer uniffi_inventory_core_fn_method_inventory_set_item_quantity(
+    /*handle*/ uint64_t ptr, int64_t id, uint32_t quantity,
+    RustCallStatus *uniffi_out_err);
+RustBuffer uniffi_inventory_core_fn_method_inventory_update_item(
+    /*handle*/ uint64_t ptr, int64_t id, RustBuffer item,
+    RustCallStatus *uniffi_out_err);
 RustBuffer
 uniffi_inventory_core_fn_func_probe_models(RustBuffer llama_path,
                                            RustBuffer whisper_path,
                                            RustCallStatus *uniffi_out_err);
 RustBuffer
 uniffi_inventory_core_fn_func_self_check(RustCallStatus *uniffi_out_err);
+RustBuffer uniffi_inventory_core_fn_func_parse_expiration_date(
+    RustBuffer text, RustBuffer today, RustCallStatus *uniffi_out_err);
 RustBuffer ffi_inventory_core_rustbuffer_alloc(uint64_t size,
                                                RustCallStatus *uniffi_out_err);
 RustBuffer
@@ -221,6 +243,14 @@ void ffi_inventory_core_rust_future_complete_void(
     /*handle*/ uint64_t handle, RustCallStatus *uniffi_out_err);
 uint16_t uniffi_inventory_core_checksum_func_probe_models();
 uint16_t uniffi_inventory_core_checksum_func_self_check();
+uint16_t uniffi_inventory_core_checksum_func_parse_expiration_date();
+uint16_t uniffi_inventory_core_checksum_method_inventory_add_item();
+uint16_t uniffi_inventory_core_checksum_method_inventory_delete_item();
+uint16_t uniffi_inventory_core_checksum_method_inventory_list_items();
+uint16_t uniffi_inventory_core_checksum_method_inventory_list_locations();
+uint16_t uniffi_inventory_core_checksum_method_inventory_set_item_quantity();
+uint16_t uniffi_inventory_core_checksum_method_inventory_update_item();
+uint16_t uniffi_inventory_core_checksum_constructor_inventory_open();
 uint32_t ffi_inventory_core_uniffi_contract_version();
 }
 
@@ -1623,6 +1653,112 @@ NativeInventoryCore::NativeInventoryCore(
                 ->cpp_uniffi_internal_fn_func_ffi__read_string_from_buffer(
                     rt, thisVal, args, count);
           });
+  props["ubrn_uniffi_inventory_core_fn_clone_inventory"] =
+      jsi::Function::createFromHostFunction(
+          rt,
+          jsi::PropNameID::forAscii(
+              rt, "ubrn_uniffi_inventory_core_fn_clone_inventory"),
+          1,
+          [this](jsi::Runtime &rt, const jsi::Value &thisVal,
+                 const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_uniffi_inventory_core_fn_clone_inventory(
+                rt, thisVal, args, count);
+          });
+  props["ubrn_uniffi_inventory_core_fn_free_inventory"] =
+      jsi::Function::createFromHostFunction(
+          rt,
+          jsi::PropNameID::forAscii(
+              rt, "ubrn_uniffi_inventory_core_fn_free_inventory"),
+          1,
+          [this](jsi::Runtime &rt, const jsi::Value &thisVal,
+                 const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_uniffi_inventory_core_fn_free_inventory(
+                rt, thisVal, args, count);
+          });
+  props["ubrn_uniffi_inventory_core_fn_constructor_inventory_open"] =
+      jsi::Function::createFromHostFunction(
+          rt,
+          jsi::PropNameID::forAscii(
+              rt, "ubrn_uniffi_inventory_core_fn_constructor_inventory_open"),
+          1,
+          [this](jsi::Runtime &rt, const jsi::Value &thisVal,
+                 const jsi::Value *args, size_t count) -> jsi::Value {
+            return this
+                ->cpp_uniffi_inventory_core_fn_constructor_inventory_open(
+                    rt, thisVal, args, count);
+          });
+  props["ubrn_uniffi_inventory_core_fn_method_inventory_add_item"] =
+      jsi::Function::createFromHostFunction(
+          rt,
+          jsi::PropNameID::forAscii(
+              rt, "ubrn_uniffi_inventory_core_fn_method_inventory_add_item"),
+          2,
+          [this](jsi::Runtime &rt, const jsi::Value &thisVal,
+                 const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_uniffi_inventory_core_fn_method_inventory_add_item(
+                rt, thisVal, args, count);
+          });
+  props["ubrn_uniffi_inventory_core_fn_method_inventory_delete_item"] =
+      jsi::Function::createFromHostFunction(
+          rt,
+          jsi::PropNameID::forAscii(
+              rt, "ubrn_uniffi_inventory_core_fn_method_inventory_delete_item"),
+          2,
+          [this](jsi::Runtime &rt, const jsi::Value &thisVal,
+                 const jsi::Value *args, size_t count) -> jsi::Value {
+            return this
+                ->cpp_uniffi_inventory_core_fn_method_inventory_delete_item(
+                    rt, thisVal, args, count);
+          });
+  props["ubrn_uniffi_inventory_core_fn_method_inventory_list_items"] =
+      jsi::Function::createFromHostFunction(
+          rt,
+          jsi::PropNameID::forAscii(
+              rt, "ubrn_uniffi_inventory_core_fn_method_inventory_list_items"),
+          2,
+          [this](jsi::Runtime &rt, const jsi::Value &thisVal,
+                 const jsi::Value *args, size_t count) -> jsi::Value {
+            return this
+                ->cpp_uniffi_inventory_core_fn_method_inventory_list_items(
+                    rt, thisVal, args, count);
+          });
+  props["ubrn_uniffi_inventory_core_fn_method_inventory_list_locations"] =
+      jsi::Function::createFromHostFunction(
+          rt,
+          jsi::PropNameID::forAscii(
+              rt,
+              "ubrn_uniffi_inventory_core_fn_method_inventory_list_locations"),
+          1,
+          [this](jsi::Runtime &rt, const jsi::Value &thisVal,
+                 const jsi::Value *args, size_t count) -> jsi::Value {
+            return this
+                ->cpp_uniffi_inventory_core_fn_method_inventory_list_locations(
+                    rt, thisVal, args, count);
+          });
+  props["ubrn_uniffi_inventory_core_fn_method_inventory_set_item_quantity"] =
+      jsi::Function::createFromHostFunction(
+          rt,
+          jsi::PropNameID::forAscii(rt, "ubrn_uniffi_inventory_core_fn_method_"
+                                        "inventory_set_item_quantity"),
+          3,
+          [this](jsi::Runtime &rt, const jsi::Value &thisVal,
+                 const jsi::Value *args, size_t count) -> jsi::Value {
+            return this
+                ->cpp_uniffi_inventory_core_fn_method_inventory_set_item_quantity(
+                    rt, thisVal, args, count);
+          });
+  props["ubrn_uniffi_inventory_core_fn_method_inventory_update_item"] =
+      jsi::Function::createFromHostFunction(
+          rt,
+          jsi::PropNameID::forAscii(
+              rt, "ubrn_uniffi_inventory_core_fn_method_inventory_update_item"),
+          3,
+          [this](jsi::Runtime &rt, const jsi::Value &thisVal,
+                 const jsi::Value *args, size_t count) -> jsi::Value {
+            return this
+                ->cpp_uniffi_inventory_core_fn_method_inventory_update_item(
+                    rt, thisVal, args, count);
+          });
   props["ubrn_uniffi_inventory_core_fn_func_probe_models"] =
       jsi::Function::createFromHostFunction(
           rt,
@@ -1644,6 +1780,18 @@ NativeInventoryCore::NativeInventoryCore(
                  const jsi::Value *args, size_t count) -> jsi::Value {
             return this->cpp_uniffi_inventory_core_fn_func_self_check(
                 rt, thisVal, args, count);
+          });
+  props["ubrn_uniffi_inventory_core_fn_func_parse_expiration_date"] =
+      jsi::Function::createFromHostFunction(
+          rt,
+          jsi::PropNameID::forAscii(
+              rt, "ubrn_uniffi_inventory_core_fn_func_parse_expiration_date"),
+          2,
+          [this](jsi::Runtime &rt, const jsi::Value &thisVal,
+                 const jsi::Value *args, size_t count) -> jsi::Value {
+            return this
+                ->cpp_uniffi_inventory_core_fn_func_parse_expiration_date(
+                    rt, thisVal, args, count);
           });
   props["ubrn_uniffi_inventory_core_checksum_func_probe_models"] =
       jsi::Function::createFromHostFunction(
@@ -1667,6 +1815,105 @@ NativeInventoryCore::NativeInventoryCore(
             return this->cpp_uniffi_inventory_core_checksum_func_self_check(
                 rt, thisVal, args, count);
           });
+  props["ubrn_uniffi_inventory_core_checksum_func_parse_expiration_date"] =
+      jsi::Function::createFromHostFunction(
+          rt,
+          jsi::PropNameID::forAscii(
+              rt,
+              "ubrn_uniffi_inventory_core_checksum_func_parse_expiration_date"),
+          0,
+          [this](jsi::Runtime &rt, const jsi::Value &thisVal,
+                 const jsi::Value *args, size_t count) -> jsi::Value {
+            return this
+                ->cpp_uniffi_inventory_core_checksum_func_parse_expiration_date(
+                    rt, thisVal, args, count);
+          });
+  props["ubrn_uniffi_inventory_core_checksum_method_inventory_add_item"] =
+      jsi::Function::createFromHostFunction(
+          rt,
+          jsi::PropNameID::forAscii(
+              rt,
+              "ubrn_uniffi_inventory_core_checksum_method_inventory_add_item"),
+          0,
+          [this](jsi::Runtime &rt, const jsi::Value &thisVal,
+                 const jsi::Value *args, size_t count) -> jsi::Value {
+            return this
+                ->cpp_uniffi_inventory_core_checksum_method_inventory_add_item(
+                    rt, thisVal, args, count);
+          });
+  props["ubrn_uniffi_inventory_core_checksum_method_inventory_delete_item"] =
+      jsi::Function::createFromHostFunction(
+          rt,
+          jsi::PropNameID::forAscii(rt, "ubrn_uniffi_inventory_core_checksum_"
+                                        "method_inventory_delete_item"),
+          0,
+          [this](jsi::Runtime &rt, const jsi::Value &thisVal,
+                 const jsi::Value *args, size_t count) -> jsi::Value {
+            return this
+                ->cpp_uniffi_inventory_core_checksum_method_inventory_delete_item(
+                    rt, thisVal, args, count);
+          });
+  props["ubrn_uniffi_inventory_core_checksum_method_inventory_list_items"] =
+      jsi::Function::createFromHostFunction(
+          rt,
+          jsi::PropNameID::forAscii(rt, "ubrn_uniffi_inventory_core_checksum_"
+                                        "method_inventory_list_items"),
+          0,
+          [this](jsi::Runtime &rt, const jsi::Value &thisVal,
+                 const jsi::Value *args, size_t count) -> jsi::Value {
+            return this
+                ->cpp_uniffi_inventory_core_checksum_method_inventory_list_items(
+                    rt, thisVal, args, count);
+          });
+  props["ubrn_uniffi_inventory_core_checksum_method_inventory_list_locations"] =
+      jsi::Function::createFromHostFunction(
+          rt,
+          jsi::PropNameID::forAscii(rt, "ubrn_uniffi_inventory_core_checksum_"
+                                        "method_inventory_list_locations"),
+          0,
+          [this](jsi::Runtime &rt, const jsi::Value &thisVal,
+                 const jsi::Value *args, size_t count) -> jsi::Value {
+            return this
+                ->cpp_uniffi_inventory_core_checksum_method_inventory_list_locations(
+                    rt, thisVal, args, count);
+          });
+  props["ubrn_uniffi_inventory_core_checksum_method_inventory_set_item_"
+        "quantity"] = jsi::Function::createFromHostFunction(
+      rt,
+      jsi::PropNameID::forAscii(rt, "ubrn_uniffi_inventory_core_checksum_"
+                                    "method_inventory_set_item_quantity"),
+      0,
+      [this](jsi::Runtime &rt, const jsi::Value &thisVal,
+             const jsi::Value *args, size_t count) -> jsi::Value {
+        return this
+            ->cpp_uniffi_inventory_core_checksum_method_inventory_set_item_quantity(
+                rt, thisVal, args, count);
+      });
+  props["ubrn_uniffi_inventory_core_checksum_method_inventory_update_item"] =
+      jsi::Function::createFromHostFunction(
+          rt,
+          jsi::PropNameID::forAscii(rt, "ubrn_uniffi_inventory_core_checksum_"
+                                        "method_inventory_update_item"),
+          0,
+          [this](jsi::Runtime &rt, const jsi::Value &thisVal,
+                 const jsi::Value *args, size_t count) -> jsi::Value {
+            return this
+                ->cpp_uniffi_inventory_core_checksum_method_inventory_update_item(
+                    rt, thisVal, args, count);
+          });
+  props["ubrn_uniffi_inventory_core_checksum_constructor_inventory_open"] =
+      jsi::Function::createFromHostFunction(
+          rt,
+          jsi::PropNameID::forAscii(
+              rt,
+              "ubrn_uniffi_inventory_core_checksum_constructor_inventory_open"),
+          0,
+          [this](jsi::Runtime &rt, const jsi::Value &thisVal,
+                 const jsi::Value *args, size_t count) -> jsi::Value {
+            return this
+                ->cpp_uniffi_inventory_core_checksum_constructor_inventory_open(
+                    rt, thisVal, args, count);
+          });
   props["ubrn_ffi_inventory_core_uniffi_contract_version"] =
       jsi::Function::createFromHostFunction(
           rt,
@@ -1677,6 +1924,19 @@ NativeInventoryCore::NativeInventoryCore(
                  const jsi::Value *args, size_t count) -> jsi::Value {
             return this->cpp_ffi_inventory_core_uniffi_contract_version(
                 rt, thisVal, args, count);
+          });
+  props["ubrn_uniffi_internal_fn_method_inventory_ffi__bless_pointer"] =
+      jsi::Function::createFromHostFunction(
+          rt,
+          jsi::PropNameID::forAscii(
+              rt,
+              "ubrn_uniffi_internal_fn_method_inventory_ffi__bless_pointer"),
+          1,
+          [this](jsi::Runtime &rt, const jsi::Value &thisVal,
+                 const jsi::Value *args, size_t count) -> jsi::Value {
+            return this
+                ->cpp_uniffi_internal_fn_method_inventory_ffi__bless_pointer(
+                    rt, thisVal, args, count);
           });
 
   // `rustbuffer_alloc(n)` -> Uint8Array view over Rust-owned memory of capacity
@@ -1850,8 +2110,172 @@ NativeInventoryCore::cpp_uniffi_internal_fn_func_ffi__read_string_from_buffer(
   return uniffi_jsi::Bridging<std::string>::read_string_from_buffer(
       rt, args[0], args[1], args[2]);
 }
+jsi::Value
+NativeInventoryCore::cpp_uniffi_internal_fn_method_inventory_ffi__bless_pointer(
+    jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args,
+    size_t count) {
+  auto pointer =
+      uniffi_jsi::Bridging<uint64_t>::fromJs(rt, callInvoker, args[0]);
+  auto static destructor = [](uint64_t p) {
+    RustCallStatus status = {0};
+    uniffi_inventory_core_fn_free_inventory(p, &status);
+  };
+  auto ptrObj =
+      std::make_shared<uniffi_jsi::DestructibleObject>(pointer, destructor);
+  auto obj = jsi::Object::createFromHostObject(rt, ptrObj);
+  return jsi::Value(rt, obj);
+}
 
 // Methods calling directly into the uniffi generated C API of the Rust crate.
+jsi::Value NativeInventoryCore::cpp_uniffi_inventory_core_fn_clone_inventory(
+    jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args,
+    size_t count) {
+  RustCallStatus status =
+      uniffi::inventory_core::Bridging<RustCallStatus>::rustSuccess(rt);
+  auto value = uniffi_inventory_core_fn_clone_inventory(
+      uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker,
+                                                        args[0]),
+      &status);
+  uniffi::inventory_core::Bridging<RustCallStatus>::copyIntoJs(
+      rt, callInvoker, status, args[count - 1]);
+
+  return uniffi_jsi::Bridging</*handle*/ uint64_t>::toJs(rt, callInvoker,
+                                                         value);
+}
+jsi::Value NativeInventoryCore::cpp_uniffi_inventory_core_fn_free_inventory(
+    jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args,
+    size_t count) {
+  RustCallStatus status =
+      uniffi::inventory_core::Bridging<RustCallStatus>::rustSuccess(rt);
+  uniffi_inventory_core_fn_free_inventory(
+      uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker,
+                                                        args[0]),
+      &status);
+  uniffi::inventory_core::Bridging<RustCallStatus>::copyIntoJs(
+      rt, callInvoker, status, args[count - 1]);
+
+  return jsi::Value::undefined();
+}
+jsi::Value
+NativeInventoryCore::cpp_uniffi_inventory_core_fn_constructor_inventory_open(
+    jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args,
+    size_t count) {
+  RustCallStatus status =
+      uniffi::inventory_core::Bridging<RustCallStatus>::rustSuccess(rt);
+  auto value = uniffi_inventory_core_fn_constructor_inventory_open(
+      uniffi::inventory_core::Bridging<RustBuffer>::fromJs(rt, callInvoker,
+                                                           args[0]),
+      &status);
+  uniffi::inventory_core::Bridging<RustCallStatus>::copyIntoJs(
+      rt, callInvoker, status, args[count - 1]);
+
+  return uniffi_jsi::Bridging</*handle*/ uint64_t>::toJs(rt, callInvoker,
+                                                         value);
+}
+jsi::Value
+NativeInventoryCore::cpp_uniffi_inventory_core_fn_method_inventory_add_item(
+    jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args,
+    size_t count) {
+  RustCallStatus status =
+      uniffi::inventory_core::Bridging<RustCallStatus>::rustSuccess(rt);
+  auto value = uniffi_inventory_core_fn_method_inventory_add_item(
+      uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker,
+                                                        args[0]),
+      uniffi::inventory_core::Bridging<RustBuffer>::fromJs(rt, callInvoker,
+                                                           args[1]),
+      &status);
+  uniffi::inventory_core::Bridging<RustCallStatus>::copyIntoJs(
+      rt, callInvoker, status, args[count - 1]);
+
+  return uniffi::inventory_core::Bridging<RustBuffer>::toJs(rt, callInvoker,
+                                                            value);
+}
+jsi::Value
+NativeInventoryCore::cpp_uniffi_inventory_core_fn_method_inventory_delete_item(
+    jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args,
+    size_t count) {
+  RustCallStatus status =
+      uniffi::inventory_core::Bridging<RustCallStatus>::rustSuccess(rt);
+  uniffi_inventory_core_fn_method_inventory_delete_item(
+      uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker,
+                                                        args[0]),
+      uniffi_jsi::Bridging<int64_t>::fromJs(rt, callInvoker, args[1]), &status);
+  uniffi::inventory_core::Bridging<RustCallStatus>::copyIntoJs(
+      rt, callInvoker, status, args[count - 1]);
+
+  return jsi::Value::undefined();
+}
+jsi::Value
+NativeInventoryCore::cpp_uniffi_inventory_core_fn_method_inventory_list_items(
+    jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args,
+    size_t count) {
+  RustCallStatus status =
+      uniffi::inventory_core::Bridging<RustCallStatus>::rustSuccess(rt);
+  auto value = uniffi_inventory_core_fn_method_inventory_list_items(
+      uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker,
+                                                        args[0]),
+      uniffi::inventory_core::Bridging<RustBuffer>::fromJs(rt, callInvoker,
+                                                           args[1]),
+      &status);
+  uniffi::inventory_core::Bridging<RustCallStatus>::copyIntoJs(
+      rt, callInvoker, status, args[count - 1]);
+
+  return uniffi::inventory_core::Bridging<RustBuffer>::toJs(rt, callInvoker,
+                                                            value);
+}
+jsi::Value NativeInventoryCore::
+    cpp_uniffi_inventory_core_fn_method_inventory_list_locations(
+        jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args,
+        size_t count) {
+  RustCallStatus status =
+      uniffi::inventory_core::Bridging<RustCallStatus>::rustSuccess(rt);
+  auto value = uniffi_inventory_core_fn_method_inventory_list_locations(
+      uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker,
+                                                        args[0]),
+      &status);
+  uniffi::inventory_core::Bridging<RustCallStatus>::copyIntoJs(
+      rt, callInvoker, status, args[count - 1]);
+
+  return uniffi::inventory_core::Bridging<RustBuffer>::toJs(rt, callInvoker,
+                                                            value);
+}
+jsi::Value NativeInventoryCore::
+    cpp_uniffi_inventory_core_fn_method_inventory_set_item_quantity(
+        jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args,
+        size_t count) {
+  RustCallStatus status =
+      uniffi::inventory_core::Bridging<RustCallStatus>::rustSuccess(rt);
+  auto value = uniffi_inventory_core_fn_method_inventory_set_item_quantity(
+      uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker,
+                                                        args[0]),
+      uniffi_jsi::Bridging<int64_t>::fromJs(rt, callInvoker, args[1]),
+      uniffi_jsi::Bridging<uint32_t>::fromJs(rt, callInvoker, args[2]),
+      &status);
+  uniffi::inventory_core::Bridging<RustCallStatus>::copyIntoJs(
+      rt, callInvoker, status, args[count - 1]);
+
+  return uniffi::inventory_core::Bridging<RustBuffer>::toJs(rt, callInvoker,
+                                                            value);
+}
+jsi::Value
+NativeInventoryCore::cpp_uniffi_inventory_core_fn_method_inventory_update_item(
+    jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args,
+    size_t count) {
+  RustCallStatus status =
+      uniffi::inventory_core::Bridging<RustCallStatus>::rustSuccess(rt);
+  auto value = uniffi_inventory_core_fn_method_inventory_update_item(
+      uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker,
+                                                        args[0]),
+      uniffi_jsi::Bridging<int64_t>::fromJs(rt, callInvoker, args[1]),
+      uniffi::inventory_core::Bridging<RustBuffer>::fromJs(rt, callInvoker,
+                                                           args[2]),
+      &status);
+  uniffi::inventory_core::Bridging<RustCallStatus>::copyIntoJs(
+      rt, callInvoker, status, args[count - 1]);
+
+  return uniffi::inventory_core::Bridging<RustBuffer>::toJs(rt, callInvoker,
+                                                            value);
+}
 jsi::Value NativeInventoryCore::cpp_uniffi_inventory_core_fn_func_probe_models(
     jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args,
     size_t count) {
@@ -1882,6 +2306,24 @@ jsi::Value NativeInventoryCore::cpp_uniffi_inventory_core_fn_func_self_check(
                                                             value);
 }
 jsi::Value
+NativeInventoryCore::cpp_uniffi_inventory_core_fn_func_parse_expiration_date(
+    jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args,
+    size_t count) {
+  RustCallStatus status =
+      uniffi::inventory_core::Bridging<RustCallStatus>::rustSuccess(rt);
+  auto value = uniffi_inventory_core_fn_func_parse_expiration_date(
+      uniffi::inventory_core::Bridging<RustBuffer>::fromJs(rt, callInvoker,
+                                                           args[0]),
+      uniffi::inventory_core::Bridging<RustBuffer>::fromJs(rt, callInvoker,
+                                                           args[1]),
+      &status);
+  uniffi::inventory_core::Bridging<RustCallStatus>::copyIntoJs(
+      rt, callInvoker, status, args[count - 1]);
+
+  return uniffi::inventory_core::Bridging<RustBuffer>::toJs(rt, callInvoker,
+                                                            value);
+}
+jsi::Value
 NativeInventoryCore::cpp_uniffi_inventory_core_checksum_func_probe_models(
     jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args,
     size_t count) {
@@ -1894,6 +2336,71 @@ NativeInventoryCore::cpp_uniffi_inventory_core_checksum_func_self_check(
     jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args,
     size_t count) {
   auto value = uniffi_inventory_core_checksum_func_self_check();
+
+  return uniffi_jsi::Bridging<uint16_t>::toJs(rt, callInvoker, value);
+}
+jsi::Value NativeInventoryCore::
+    cpp_uniffi_inventory_core_checksum_func_parse_expiration_date(
+        jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args,
+        size_t count) {
+  auto value = uniffi_inventory_core_checksum_func_parse_expiration_date();
+
+  return uniffi_jsi::Bridging<uint16_t>::toJs(rt, callInvoker, value);
+}
+jsi::Value NativeInventoryCore::
+    cpp_uniffi_inventory_core_checksum_method_inventory_add_item(
+        jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args,
+        size_t count) {
+  auto value = uniffi_inventory_core_checksum_method_inventory_add_item();
+
+  return uniffi_jsi::Bridging<uint16_t>::toJs(rt, callInvoker, value);
+}
+jsi::Value NativeInventoryCore::
+    cpp_uniffi_inventory_core_checksum_method_inventory_delete_item(
+        jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args,
+        size_t count) {
+  auto value = uniffi_inventory_core_checksum_method_inventory_delete_item();
+
+  return uniffi_jsi::Bridging<uint16_t>::toJs(rt, callInvoker, value);
+}
+jsi::Value NativeInventoryCore::
+    cpp_uniffi_inventory_core_checksum_method_inventory_list_items(
+        jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args,
+        size_t count) {
+  auto value = uniffi_inventory_core_checksum_method_inventory_list_items();
+
+  return uniffi_jsi::Bridging<uint16_t>::toJs(rt, callInvoker, value);
+}
+jsi::Value NativeInventoryCore::
+    cpp_uniffi_inventory_core_checksum_method_inventory_list_locations(
+        jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args,
+        size_t count) {
+  auto value = uniffi_inventory_core_checksum_method_inventory_list_locations();
+
+  return uniffi_jsi::Bridging<uint16_t>::toJs(rt, callInvoker, value);
+}
+jsi::Value NativeInventoryCore::
+    cpp_uniffi_inventory_core_checksum_method_inventory_set_item_quantity(
+        jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args,
+        size_t count) {
+  auto value =
+      uniffi_inventory_core_checksum_method_inventory_set_item_quantity();
+
+  return uniffi_jsi::Bridging<uint16_t>::toJs(rt, callInvoker, value);
+}
+jsi::Value NativeInventoryCore::
+    cpp_uniffi_inventory_core_checksum_method_inventory_update_item(
+        jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args,
+        size_t count) {
+  auto value = uniffi_inventory_core_checksum_method_inventory_update_item();
+
+  return uniffi_jsi::Bridging<uint16_t>::toJs(rt, callInvoker, value);
+}
+jsi::Value NativeInventoryCore::
+    cpp_uniffi_inventory_core_checksum_constructor_inventory_open(
+        jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args,
+        size_t count) {
+  auto value = uniffi_inventory_core_checksum_constructor_inventory_open();
 
   return uniffi_jsi::Bridging<uint16_t>::toJs(rt, callInvoker, value);
 }

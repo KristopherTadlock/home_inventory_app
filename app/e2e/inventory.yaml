@@ -1,0 +1,134 @@
+appId: com.opt.homeinventory
+---
+# Empty inventory on a fresh install.
+- launchApp:
+    clearState: true
+- assertVisible: "Your inventory is empty. Tap \\+ to add an item."
+- assertVisible: "Built with Llama"
+
+# Add an item with a quantity and an expiration date.
+# (No hideKeyboard inside the form: on Android it sends Back. Tapping the form's title
+# closes the keyboard instead, and the lower fields are scrolled into view before each
+# tap, so the flow works on small screens.)
+- tapOn:
+    id: "add-item-button"
+- tapOn:
+    id: "item-name-input"
+- inputText: "Milk 1 gallon"
+- tapOn:
+    id: "location-chip-Fridge"
+- tapOn:
+    id: "quantity-increment"
+- tapOn:
+    id: "item-form-title"
+# The date picker opens on today; accepting it keeps the flow independent of the date.
+- scrollUntilVisible:
+    element:
+      id: "expiration-input"
+    direction: DOWN
+- tapOn:
+    id: "expiration-input"
+- tapOn: "OK"
+- assertVisible:
+    id: "clear-expiration"
+- scrollUntilVisible:
+    element:
+      id: "save-item-button"
+    direction: DOWN
+- tapOn:
+    id: "save-item-button"
+- assertVisible: "Milk 1 gallon"
+- assertVisible: "×2"
+- assertVisible: "Fridge · Expires today"
+- assertVisible: "Added today"
+
+# Add an item that does not expire.
+- tapOn:
+    id: "add-item-button"
+- tapOn:
+    id: "item-name-input"
+- inputText: "Hammer"
+- tapOn:
+    id: "item-location-input"
+- inputText: "Garage"
+- tapOn:
+    id: "item-form-title"
+- scrollUntilVisible:
+    element:
+      id: "save-item-button"
+    direction: DOWN
+- tapOn:
+    id: "save-item-button"
+- assertVisible: "Hammer"
+
+# Partial, case-insensitive search by item name.
+- tapOn:
+    id: "search-input"
+- inputText: "MIL"
+- assertVisible: "Milk 1 gallon"
+- assertNotVisible: "Hammer"
+- tapOn:
+    id: "clear-search"
+- assertVisible: "Milk 1 gallon"
+- assertVisible: "Hammer"
+
+# The chat box accepts text but does nothing yet.
+- tapOn:
+    id: "chat-input"
+- inputText: "add two cartons of milk"
+- pressKey: Enter
+- hideKeyboard
+- assertVisible: "Milk 1 gallon"
+- assertVisible: "Hammer"
+
+# Tapping an item opens its edit view; saving updates the item.
+- tapOn: "Hammer"
+- assertVisible: "Edit item"
+- tapOn:
+    id: "item-name-input"
+- eraseText
+- inputText: "Claw hammer"
+- tapOn:
+    id: "quantity-increment"
+- tapOn:
+    id: "quantity-increment"
+- tapOn:
+    id: "item-form-title"
+- scrollUntilVisible:
+    element:
+      id: "save-item-button"
+    direction: DOWN
+- tapOn:
+    id: "save-item-button"
+- assertVisible: "Claw hammer"
+- assertVisible: "×3"
+
+# Deleting asks for confirmation; Keep leaves the item, Delete removes it.
+- tapOn: "Milk 1 gallon"
+- scrollUntilVisible:
+    element:
+      id: "delete-item-button"
+    direction: DOWN
+- tapOn:
+    id: "delete-item-button"
+- assertVisible:
+    id: "delete-confirmation"
+- tapOn:
+    id: "cancel-delete-button"
+- scrollUntilVisible:
+    element:
+      id: "delete-item-button"
+    direction: DOWN
+- tapOn:
+    id: "delete-item-button"
+- tapOn:
+    id: "confirm-delete-button"
+- assertNotVisible: "Milk 1 gallon"
+- assertVisible: "Claw hammer"
+
+# Items, edits and deletions persist across restarts.
+- stopApp
+- launchApp
+- assertVisible: "Claw hammer"
+- assertVisible: "×3"
+- assertNotVisible: "Milk 1 gallon"

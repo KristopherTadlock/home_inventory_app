@@ -1,28 +1,18 @@
-import React, { useEffect } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
 import { selfCheck } from 'core-bridge';
+import { AppRoot } from './AppRoot';
+import { createCoreInventoryRepository } from './features/inventory/data/coreInventoryRepository';
+import { exitApp } from './platform/exitApp';
 
+/** The Android app: the Rust core for storage and the native host for exiting. */
 function App(): React.JSX.Element {
+  const [repository] = useState(() => createCoreInventoryRepository());
+
   useEffect(() => {
     console.log('core self-check', JSON.stringify(selfCheck()));
   }, []);
 
-  return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Hello World</Text>
-    </View>
-  );
+  return <AppRoot repository={repository} onExit={exitApp} />;
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  title: {
-    fontSize: 32,
-  },
-});
 
 export default App;

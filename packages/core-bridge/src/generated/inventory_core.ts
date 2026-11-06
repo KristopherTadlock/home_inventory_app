@@ -6,7 +6,7 @@
 import nativeModule from "./inventory_core-ffi";
 import { type UniffiRustFutureContinuationCallback, type UniffiForeignFutureDroppedCallback, type UniffiForeignFutureDroppedCallbackStruct,
 } from "./inventory_core-ffi";
-import { type UniffiByteArray, AbstractFfiConverterByteArray, Cursor, FfiConverterBool, FfiConverterOptional, RustBuffer, UniffiInternalError, UniffiRustCaller, uniffiCreateFfiConverterString, uniffiCreateRecord,
+import { type FfiConverter, type UniffiByteArray, type UniffiGcObject, type UniffiHandle, type UniffiObjectFactory, AbstractFfiConverterByteArray, Cursor, FfiConverterArray, FfiConverterBool, FfiConverterInt64, FfiConverterObject, FfiConverterOptional, FfiConverterUInt32, FfiConverterUInt8, RustBuffer, UniffiAbstractObject, UniffiEnum, UniffiError, UniffiInternalError, UniffiRustCaller, destructorGuardSymbol, pointerLiteralSymbol, uniffiCreateFfiConverterString, uniffiCreateRecord, uniffiTypeNameSymbol, variantOrdinalSymbol,
 } from "@ubjs/core";
 const uniffiCaller = new UniffiRustCaller(() => ({ code: 0 }));
 
@@ -18,6 +18,28 @@ const uniffiIsDebug =
   false;
 
 // Public interface members begin here.
+
+/**
+ * Resolves an English date phrase ("Oct 27 2027", "next Friday", "in 2 weeks") to
+ * `YYYY-MM-DD`, relative to `today` (`YYYY-MM-DD`, the device's local date). Returns
+ * `None` for empty or unrecognised text, or a malformed `today`.
+ */
+export function parseExpirationDate(text: string, today: string): string | undefined {
+    const __rb: Uint8Array = uniffiCaller.rustCall(
+            /*caller:*/ (callStatus) => {
+                return nativeModule().ubrn_uniffi_inventory_core_fn_func_parse_expiration_date(
+        FfiConverterString.lower(text, nativeModule().rustbuffer_alloc),
+        FfiConverterString.lower(today, nativeModule().rustbuffer_alloc),
+                callStatus);
+            },
+            /*liftString:*/ FfiConverterString.lift.bind(FfiConverterString),
+    );
+    try {
+        return FfiConverterOptionalString.lift(__rb);
+    } finally {
+        nativeModule().rustbuffer_free(__rb);
+    }
+    }
 
 export function probeModels(llamaPath: string, whisperPath: string): ModelProbe {
     const __rb: Uint8Array = uniffiCaller.rustCall(
@@ -50,52 +72,6 @@ export function selfCheck(): SelfCheck {
         nativeModule().rustbuffer_free(__rb);
     }
     }
-
-/**
- * Whether each engine accepts its model file.
- */
-export type ModelProbe = {
-    llama: boolean,
-    whisper: boolean
-}
-
-/**
- * Generated factory for {@link ModelProbe} record objects.
- */
-export const ModelProbe = (() => {
-    const defaults = () => ({
-    });
-    const create = (() => {
-        return uniffiCreateRecord<ModelProbe, ReturnType<typeof defaults>>(defaults);
-    })();
-    return Object.freeze({
-        create,
-        new: create,
-        defaults: () => Object.freeze(defaults()) as Partial<ModelProbe>,
-    });
-})();
-
-const FfiConverterTypeModelProbe = (() => {
-    type TypeName = ModelProbe;
-    class FFIConverter extends AbstractFfiConverterByteArray<TypeName> {
-        readFromCursor(c: Cursor): TypeName {
-            return {
-                llama: FfiConverterBool.readFromCursor(c), 
-                whisper: FfiConverterBool.readFromCursor(c)
-            };
-        }
-        writeIntoCursor(value: TypeName, c: Cursor): void {
-            FfiConverterBool.writeIntoCursor(value.llama, c);
-            FfiConverterBool.writeIntoCursor(value.whisper, c);
-        }
-        allocationSize(value: TypeName): number {
-            return FfiConverterBool.allocationSize(value.llama) +
-             FfiConverterBool.allocationSize(value.whisper);
-            
-        }
-    };
-    return new FFIConverter();
-})();
 
 // Hermes (React Native ≥ 0.74) ships TextEncoder and encodeInto, but not
 // TextDecoder. For single-string decode (bytesToString), we polyfill via the
@@ -148,6 +124,180 @@ const stringConverter = (() => {
     };
 })();
 const FfiConverterString = uniffiCreateFfiConverterString(stringConverter);
+
+/**
+ * A stored item.
+ */
+export type Item = {
+    id: bigint,
+    name: string,
+    location: string,
+    /**
+     * Always at least 1: an item whose quantity reaches 0 is deleted.
+     */
+    quantity: number,
+    /**
+     * `YYYY-MM-DD`, or `None` if the item does not expire.
+     */
+    expirationDate?: string,
+    /**
+     * UTC insert time, `YYYY-MM-DDTHH:MM:SS.SSSZ`.
+     */
+    createdDate: string
+}
+
+/**
+ * Generated factory for {@link Item} record objects.
+ */
+export const Item = (() => {
+    const defaults = () => ({
+    });
+    const create = (() => {
+        return uniffiCreateRecord<Item, ReturnType<typeof defaults>>(defaults);
+    })();
+    return Object.freeze({
+        create,
+        new: create,
+        defaults: () => Object.freeze(defaults()) as Partial<Item>,
+    });
+})();
+
+const FfiConverterTypeItem = (() => {
+    type TypeName = Item;
+    class FFIConverter extends AbstractFfiConverterByteArray<TypeName> {
+        readFromCursor(c: Cursor): TypeName {
+            return {
+                id: FfiConverterInt64.readFromCursor(c), 
+                name: FfiConverterString.readFromCursor(c), 
+                location: FfiConverterString.readFromCursor(c), 
+                quantity: FfiConverterUInt32.readFromCursor(c), 
+                expirationDate: FfiConverterOptionalString.readFromCursor(c), 
+                createdDate: FfiConverterString.readFromCursor(c)
+            };
+        }
+        writeIntoCursor(value: TypeName, c: Cursor): void {
+            FfiConverterInt64.writeIntoCursor(value.id, c);
+            FfiConverterString.writeIntoCursor(value.name, c);
+            FfiConverterString.writeIntoCursor(value.location, c);
+            FfiConverterUInt32.writeIntoCursor(value.quantity, c);
+            FfiConverterOptionalString.writeIntoCursor(value.expirationDate, c);
+            FfiConverterString.writeIntoCursor(value.createdDate, c);
+        }
+        allocationSize(value: TypeName): number {
+            return FfiConverterInt64.allocationSize(value.id) +
+             FfiConverterString.allocationSize(value.name) +
+             FfiConverterString.allocationSize(value.location) +
+             FfiConverterUInt32.allocationSize(value.quantity) +
+             FfiConverterOptionalString.allocationSize(value.expirationDate) +
+             FfiConverterString.allocationSize(value.createdDate);
+            
+        }
+    };
+    return new FFIConverter();
+})();
+
+/**
+ * Whether each engine accepts its model file.
+ */
+export type ModelProbe = {
+    llama: boolean,
+    whisper: boolean
+}
+
+/**
+ * Generated factory for {@link ModelProbe} record objects.
+ */
+export const ModelProbe = (() => {
+    const defaults = () => ({
+    });
+    const create = (() => {
+        return uniffiCreateRecord<ModelProbe, ReturnType<typeof defaults>>(defaults);
+    })();
+    return Object.freeze({
+        create,
+        new: create,
+        defaults: () => Object.freeze(defaults()) as Partial<ModelProbe>,
+    });
+})();
+
+const FfiConverterTypeModelProbe = (() => {
+    type TypeName = ModelProbe;
+    class FFIConverter extends AbstractFfiConverterByteArray<TypeName> {
+        readFromCursor(c: Cursor): TypeName {
+            return {
+                llama: FfiConverterBool.readFromCursor(c), 
+                whisper: FfiConverterBool.readFromCursor(c)
+            };
+        }
+        writeIntoCursor(value: TypeName, c: Cursor): void {
+            FfiConverterBool.writeIntoCursor(value.llama, c);
+            FfiConverterBool.writeIntoCursor(value.whisper, c);
+        }
+        allocationSize(value: TypeName): number {
+            return FfiConverterBool.allocationSize(value.llama) +
+             FfiConverterBool.allocationSize(value.whisper);
+            
+        }
+    };
+    return new FFIConverter();
+})();
+
+/**
+ * An item to add. The created date is set by the database.
+ */
+export type NewItem = {
+    name: string,
+    location: string,
+    quantity: number,
+    /**
+     * `YYYY-MM-DD`, or `None` if the item does not expire.
+     */
+    expirationDate?: string
+}
+
+/**
+ * Generated factory for {@link NewItem} record objects.
+ */
+export const NewItem = (() => {
+    const defaults = () => ({
+    });
+    const create = (() => {
+        return uniffiCreateRecord<NewItem, ReturnType<typeof defaults>>(defaults);
+    })();
+    return Object.freeze({
+        create,
+        new: create,
+        defaults: () => Object.freeze(defaults()) as Partial<NewItem>,
+    });
+})();
+
+const FfiConverterTypeNewItem = (() => {
+    type TypeName = NewItem;
+    class FFIConverter extends AbstractFfiConverterByteArray<TypeName> {
+        readFromCursor(c: Cursor): TypeName {
+            return {
+                name: FfiConverterString.readFromCursor(c), 
+                location: FfiConverterString.readFromCursor(c), 
+                quantity: FfiConverterUInt32.readFromCursor(c), 
+                expirationDate: FfiConverterOptionalString.readFromCursor(c)
+            };
+        }
+        writeIntoCursor(value: TypeName, c: Cursor): void {
+            FfiConverterString.writeIntoCursor(value.name, c);
+            FfiConverterString.writeIntoCursor(value.location, c);
+            FfiConverterUInt32.writeIntoCursor(value.quantity, c);
+            FfiConverterOptionalString.writeIntoCursor(value.expirationDate, c);
+        }
+        allocationSize(value: TypeName): number {
+            return FfiConverterString.allocationSize(value.name) +
+             FfiConverterString.allocationSize(value.location) +
+             FfiConverterUInt32.allocationSize(value.quantity) +
+             FfiConverterOptionalString.allocationSize(value.expirationDate);
+            
+        }
+    };
+    return new FFIConverter();
+})();
 
 /**
  * One value from each linked engine.
@@ -206,8 +356,534 @@ const FfiConverterTypeSelfCheck = (() => {
     return new FFIConverter();
 })();
 
+/**
+ * The item field a validation error refers to, so the UI can show it next to that field.
+ */
+export enum ItemField {
+    Name,
+    Location,
+    Quantity,
+    ExpirationDate
+}
+
+const FfiConverterTypeItemField = (() => {
+    type TypeName = ItemField;
+    class FFIConverter extends AbstractFfiConverterByteArray<TypeName> {
+        readFromCursor(c: Cursor): TypeName {
+            switch (c.readI32()) {
+                case 1: return ItemField.Name;
+                case 2: return ItemField.Location;
+                case 3: return ItemField.Quantity;
+                case 4: return ItemField.ExpirationDate;
+                default: throw new UniffiInternalError.UnexpectedEnumCase();
+            }
+        }
+        writeIntoCursor(value: TypeName, c: Cursor): void {
+            switch (value) {
+                case ItemField.Name: return c.writeI32(1);
+                case ItemField.Location: return c.writeI32(2);
+                case ItemField.Quantity: return c.writeI32(3);
+                case ItemField.ExpirationDate: return c.writeI32(4);
+            }
+        }
+        allocationSize(value: TypeName): number {
+            return 4;
+        }
+    }
+    return new FFIConverter();
+})();
+
+
+// Error type: InventoryError
+export enum InventoryError_Tags {
+    Invalid = "Invalid",
+    NotFound = "NotFound",
+    Storage = "Storage"
+}
+export const InventoryError = (() => {
+
+    type Invalid__interface = {
+        tag: InventoryError_Tags.Invalid;
+        inner: 
+Readonly<{field: ItemField; reason: string}>
+    };
+    /**
+     * The caller's input breaks a rule; nothing was written.
+     */
+    class Invalid_ extends UniffiError implements Invalid__interface {
+        /**
+         * @private
+         * This field is private and should not be used, use `tag` instead.
+         */
+        readonly [uniffiTypeNameSymbol] = "InventoryError";
+        readonly tag = InventoryError_Tags.Invalid;
+        readonly inner: 
+Readonly<{field: ItemField; reason: string}>;
+        constructor(
+inner: {field: ItemField; reason: string }) {
+            super("InventoryError", "Invalid");
+
+            this.inner = Object.freeze(inner);
+        }
+        static new(
+inner: {field: ItemField; reason: string }): Invalid_ {
+            return new Invalid_(inner);
+        }
+
+        static instanceOf(obj: any): obj is Invalid_ {
+            return obj.tag === InventoryError_Tags.Invalid;
+        }
+        static hasInner(obj: any): obj is Invalid_ {
+            return Invalid_.instanceOf(obj);
+        }
+
+        static getInner(obj: Invalid_): 
+Readonly<{field: ItemField; reason: string}> {
+            return obj.inner;
+        }
+
+    }
+
+    type NotFound__interface = {
+        tag: InventoryError_Tags.NotFound;
+        inner: 
+Readonly<{id: bigint}>
+    };
+    class NotFound_ extends UniffiError implements NotFound__interface {
+        /**
+         * @private
+         * This field is private and should not be used, use `tag` instead.
+         */
+        readonly [uniffiTypeNameSymbol] = "InventoryError";
+        readonly tag = InventoryError_Tags.NotFound;
+        readonly inner: 
+Readonly<{id: bigint}>;
+        constructor(
+inner: {id: bigint }) {
+            super("InventoryError", "NotFound");
+
+            this.inner = Object.freeze(inner);
+        }
+        static new(
+inner: {id: bigint }): NotFound_ {
+            return new NotFound_(inner);
+        }
+
+        static instanceOf(obj: any): obj is NotFound_ {
+            return obj.tag === InventoryError_Tags.NotFound;
+        }
+        static hasInner(obj: any): obj is NotFound_ {
+            return NotFound_.instanceOf(obj);
+        }
+
+        static getInner(obj: NotFound_): 
+Readonly<{id: bigint}> {
+            return obj.inner;
+        }
+
+    }
+
+    type Storage__interface = {
+        tag: InventoryError_Tags.Storage;
+        inner: 
+Readonly<{reason: string}>
+    };
+    /**
+     * SQLite or the file system failed. The UI treats this as fatal.
+     */
+    class Storage_ extends UniffiError implements Storage__interface {
+        /**
+         * @private
+         * This field is private and should not be used, use `tag` instead.
+         */
+        readonly [uniffiTypeNameSymbol] = "InventoryError";
+        readonly tag = InventoryError_Tags.Storage;
+        readonly inner: 
+Readonly<{reason: string}>;
+        constructor(
+inner: {reason: string }) {
+            super("InventoryError", "Storage");
+
+            this.inner = Object.freeze(inner);
+        }
+        static new(
+inner: {reason: string }): Storage_ {
+            return new Storage_(inner);
+        }
+
+        static instanceOf(obj: any): obj is Storage_ {
+            return obj.tag === InventoryError_Tags.Storage;
+        }
+        static hasInner(obj: any): obj is Storage_ {
+            return Storage_.instanceOf(obj);
+        }
+
+        static getInner(obj: Storage_): 
+Readonly<{reason: string}> {
+            return obj.inner;
+        }
+
+    }
+
+    function instanceOf(obj: any): obj is InventoryError {
+        return obj[uniffiTypeNameSymbol] === "InventoryError";
+    }
+
+    return Object.freeze({
+        instanceOf,
+  Invalid: Invalid_, 
+  NotFound: NotFound_, 
+  Storage: Storage_
+    });
+
+})();
+export type InventoryError = InstanceType<
+    typeof InventoryError['Invalid' | 'NotFound' | 'Storage']
+>;
+
+// FfiConverter for enum InventoryError
+const FfiConverterTypeInventoryError = (() => {
+    type TypeName = InventoryError;
+    class FFIConverter extends AbstractFfiConverterByteArray<TypeName> {
+        readFromCursor(c: Cursor): TypeName {
+            switch (c.readI32()) {
+                case 1: return new InventoryError.Invalid({field: FfiConverterTypeItemField.readFromCursor(c), reason: FfiConverterString.readFromCursor(c) });
+                case 2: return new InventoryError.NotFound({id: FfiConverterInt64.readFromCursor(c) });
+                case 3: return new InventoryError.Storage({reason: FfiConverterString.readFromCursor(c) });
+                default: throw new UniffiInternalError.UnexpectedEnumCase();
+            }
+        }
+        writeIntoCursor(value: TypeName, c: Cursor): void {
+            switch (value.tag) {
+                case InventoryError_Tags.Invalid: {
+                    c.writeI32(1);
+                    const inner = value.inner;
+                    FfiConverterTypeItemField.writeIntoCursor(inner.field, c);
+                    FfiConverterString.writeIntoCursor(inner.reason, c);
+                    return;
+                }
+                case InventoryError_Tags.NotFound: {
+                    c.writeI32(2);
+                    const inner = value.inner;
+                    FfiConverterInt64.writeIntoCursor(inner.id, c);
+                    return;
+                }
+                case InventoryError_Tags.Storage: {
+                    c.writeI32(3);
+                    const inner = value.inner;
+                    FfiConverterString.writeIntoCursor(inner.reason, c);
+                    return;
+                }
+                default:
+                    // Throwing from here means that InventoryError_Tags hasn't matched an ordinal.
+                    throw new UniffiInternalError.UnexpectedEnumCase();
+            }
+        }
+        allocationSize(value: TypeName): number {
+            switch (value.tag) {
+                case InventoryError_Tags.Invalid: {
+                    const inner = value.inner;
+                    let size = 4;
+                    size += FfiConverterTypeItemField.allocationSize(inner.field);
+                    size += FfiConverterString.allocationSize(inner.reason);
+                    return size;
+                }
+                case InventoryError_Tags.NotFound: {
+                    const inner = value.inner;
+                    let size = 4;
+                    size += FfiConverterInt64.allocationSize(inner.id);
+                    return size;
+                }
+                case InventoryError_Tags.Storage: {
+                    const inner = value.inner;
+                    let size = 4;
+                    size += FfiConverterString.allocationSize(inner.reason);
+                    return size;
+                }
+                default: throw new UniffiInternalError.UnexpectedEnumCase();
+            }
+        }
+    }
+    return new FFIConverter();
+})();
+
+export interface InventoryLike {
+    
+/**
+ * Validates and inserts an item, and returns it as stored. A location that matches an
+ * existing one case-insensitively is stored with the existing spelling.
+ */
+    addItem(item: NewItem) /*throws*/: Item;
+/**
+ * Deletes an item. Unknown id → `NotFound`.
+ */
+    deleteItem(id: bigint) /*throws*/: void;
+/**
+ * All items, or those whose name contains `query` case-insensitively. An empty or
+ * whitespace-only query returns all items. Ordered by expiration date (soonest first,
+ * non-expiring last), then name, then id.
+ */
+    listItems(query: string | undefined) /*throws*/: Array<Item>;
+/**
+ * Distinct locations in use, alphabetical (case-insensitive).
+ */
+    listLocations() /*throws*/: Array<string>;
+/**
+ * Sets an item's quantity. A quantity of 0 deletes the item and returns `None`;
+ * otherwise returns the updated item.
+ */
+    setItemQuantity(id: bigint, quantity: number) /*throws*/: Item | undefined;
+/**
+ * Replaces an item's name, location, quantity and expiration date, validated as for
+ * `add_item`, and returns it as stored. The created date is kept. Quantity 0 is
+ * rejected: removing an item is `delete_item`. Unknown id → `NotFound`.
+ */
+    updateItem(id: bigint, item: NewItem) /*throws*/: Item;
+}
+/**
+ * @deprecated Use `InventoryLike` instead.
+ */
+export type InventoryInterface = InventoryLike;
+
+
+export class Inventory extends UniffiAbstractObject implements InventoryLike {
+
+    readonly [uniffiTypeNameSymbol] = "Inventory";
+    readonly [destructorGuardSymbol]: UniffiGcObject;
+    readonly [pointerLiteralSymbol]: UniffiHandle;
+    // No primary constructor declared for this class.
+private constructor(pointer: UniffiHandle) {
+    super();
+    this[pointerLiteralSymbol] = pointer;
+    this[destructorGuardSymbol] = uniffiTypeInventoryObjectFactory.bless(pointer);
+}
+
+    
+/**
+ * Opens (creating parent directories and the file if needed) and migrates the
+ * database at `path`.
+ */
+    static open(path: string): InventoryLike /*throws*/ {
+    return FfiConverterTypeInventory.lift(uniffiCaller.rustCallWithError(
+            /*liftError:*/ FfiConverterTypeInventoryError.lift.bind(FfiConverterTypeInventoryError),
+            /*caller:*/ (callStatus) => {
+                return nativeModule().ubrn_uniffi_inventory_core_fn_constructor_inventory_open(
+        FfiConverterString.lower(path, nativeModule().rustbuffer_alloc),
+                callStatus);
+            },
+            /*liftString:*/ FfiConverterString.lift.bind(FfiConverterString),
+    ));
+    }
+    
+
+    
+/**
+ * Validates and inserts an item, and returns it as stored. A location that matches an
+ * existing one case-insensitively is stored with the existing spelling.
+ */
+    addItem(item: NewItem): Item /*throws*/ {
+    const __rb: Uint8Array = uniffiCaller.rustCallWithError(
+            /*liftError:*/ FfiConverterTypeInventoryError.lift.bind(FfiConverterTypeInventoryError),
+            /*caller:*/ (callStatus) => {
+                return nativeModule().ubrn_uniffi_inventory_core_fn_method_inventory_add_item(
+                uniffiTypeInventoryObjectFactory.clonePointer(this),
+        FfiConverterTypeNewItem.lower(item, nativeModule().rustbuffer_alloc),
+                callStatus);
+            },
+            /*liftString:*/ FfiConverterString.lift.bind(FfiConverterString),
+    );
+    try {
+        return FfiConverterTypeItem.lift(__rb);
+    } finally {
+        nativeModule().rustbuffer_free(__rb);
+    }
+    }
+    
+/**
+ * Deletes an item. Unknown id → `NotFound`.
+ */
+    deleteItem(id: bigint): void /*throws*/ {uniffiCaller.rustCallWithError(
+            /*liftError:*/ FfiConverterTypeInventoryError.lift.bind(FfiConverterTypeInventoryError),
+            /*caller:*/ (callStatus) => { nativeModule().ubrn_uniffi_inventory_core_fn_method_inventory_delete_item(
+                uniffiTypeInventoryObjectFactory.clonePointer(this),
+        FfiConverterInt64.lower(id, nativeModule().rustbuffer_alloc),
+                callStatus);
+            },
+            /*liftString:*/ FfiConverterString.lift.bind(FfiConverterString),
+    );
+    }
+    
+/**
+ * All items, or those whose name contains `query` case-insensitively. An empty or
+ * whitespace-only query returns all items. Ordered by expiration date (soonest first,
+ * non-expiring last), then name, then id.
+ */
+    listItems(query: string | undefined): Array<Item> /*throws*/ {
+    const __rb: Uint8Array = uniffiCaller.rustCallWithError(
+            /*liftError:*/ FfiConverterTypeInventoryError.lift.bind(FfiConverterTypeInventoryError),
+            /*caller:*/ (callStatus) => {
+                return nativeModule().ubrn_uniffi_inventory_core_fn_method_inventory_list_items(
+                uniffiTypeInventoryObjectFactory.clonePointer(this),
+        FfiConverterOptionalString.lower(query, nativeModule().rustbuffer_alloc),
+                callStatus);
+            },
+            /*liftString:*/ FfiConverterString.lift.bind(FfiConverterString),
+    );
+    try {
+        return FfiConverterSequenceTypeItem.lift(__rb);
+    } finally {
+        nativeModule().rustbuffer_free(__rb);
+    }
+    }
+    
+/**
+ * Distinct locations in use, alphabetical (case-insensitive).
+ */
+    listLocations(): Array<string> /*throws*/ {
+    const __rb: Uint8Array = uniffiCaller.rustCallWithError(
+            /*liftError:*/ FfiConverterTypeInventoryError.lift.bind(FfiConverterTypeInventoryError),
+            /*caller:*/ (callStatus) => {
+                return nativeModule().ubrn_uniffi_inventory_core_fn_method_inventory_list_locations(
+                uniffiTypeInventoryObjectFactory.clonePointer(this),
+                callStatus);
+            },
+            /*liftString:*/ FfiConverterString.lift.bind(FfiConverterString),
+    );
+    try {
+        return FfiConverterSequenceString.lift(__rb);
+    } finally {
+        nativeModule().rustbuffer_free(__rb);
+    }
+    }
+    
+/**
+ * Sets an item's quantity. A quantity of 0 deletes the item and returns `None`;
+ * otherwise returns the updated item.
+ */
+    setItemQuantity(id: bigint, quantity: number): Item | undefined /*throws*/ {
+    const __rb: Uint8Array = uniffiCaller.rustCallWithError(
+            /*liftError:*/ FfiConverterTypeInventoryError.lift.bind(FfiConverterTypeInventoryError),
+            /*caller:*/ (callStatus) => {
+                return nativeModule().ubrn_uniffi_inventory_core_fn_method_inventory_set_item_quantity(
+                uniffiTypeInventoryObjectFactory.clonePointer(this),
+        FfiConverterInt64.lower(id, nativeModule().rustbuffer_alloc),
+        FfiConverterUInt32.lower(quantity, nativeModule().rustbuffer_alloc),
+                callStatus);
+            },
+            /*liftString:*/ FfiConverterString.lift.bind(FfiConverterString),
+    );
+    try {
+        return FfiConverterOptionalTypeItem.lift(__rb);
+    } finally {
+        nativeModule().rustbuffer_free(__rb);
+    }
+    }
+    
+/**
+ * Replaces an item's name, location, quantity and expiration date, validated as for
+ * `add_item`, and returns it as stored. The created date is kept. Quantity 0 is
+ * rejected: removing an item is `delete_item`. Unknown id → `NotFound`.
+ */
+    updateItem(id: bigint, item: NewItem): Item /*throws*/ {
+    const __rb: Uint8Array = uniffiCaller.rustCallWithError(
+            /*liftError:*/ FfiConverterTypeInventoryError.lift.bind(FfiConverterTypeInventoryError),
+            /*caller:*/ (callStatus) => {
+                return nativeModule().ubrn_uniffi_inventory_core_fn_method_inventory_update_item(
+                uniffiTypeInventoryObjectFactory.clonePointer(this),
+        FfiConverterInt64.lower(id, nativeModule().rustbuffer_alloc),
+        FfiConverterTypeNewItem.lower(item, nativeModule().rustbuffer_alloc),
+                callStatus);
+            },
+            /*liftString:*/ FfiConverterString.lift.bind(FfiConverterString),
+    );
+    try {
+        return FfiConverterTypeItem.lift(__rb);
+    } finally {
+        nativeModule().rustbuffer_free(__rb);
+    }
+    }
+    
+
+    uniffiDestroy(): void {
+        const ptr = (this as any)[destructorGuardSymbol];
+        if (ptr !== undefined) {
+            const pointer = uniffiTypeInventoryObjectFactory.pointer(this);
+            uniffiTypeInventoryObjectFactory.freePointer(pointer);
+            uniffiTypeInventoryObjectFactory.unbless(ptr);
+            delete (this as any)[destructorGuardSymbol];
+        }
+    }
+
+    static instanceOf(obj_: any): obj_ is Inventory {
+        return uniffiTypeInventoryObjectFactory.isConcreteType(obj_);
+    }
+
+    
+}
+
+const uniffiTypeInventoryObjectFactory: UniffiObjectFactory<InventoryLike> = (() => {
+    
+    return {
+    create(pointer: UniffiHandle): InventoryLike {
+        const instance = Object.create(Inventory.prototype);
+        instance[pointerLiteralSymbol] = pointer;
+        instance[destructorGuardSymbol] = this.bless(pointer);
+        instance[uniffiTypeNameSymbol] = "Inventory";
+        return instance;
+    },
+
+    
+    bless(p: UniffiHandle): UniffiGcObject {
+        return uniffiCaller.rustCall(
+            /*caller:*/ (status) =>
+                nativeModule().ubrn_uniffi_internal_fn_method_inventory_ffi__bless_pointer(p, status),
+            /*liftString:*/ FfiConverterString.lift
+        );
+    },
+
+    unbless(ptr_: UniffiGcObject) {
+        ptr_.markDestroyed();
+    },
+
+    pointer(obj_: InventoryLike): UniffiHandle {
+        if ((obj_ as any)[destructorGuardSymbol] === undefined) {
+            throw new UniffiInternalError.UnexpectedNullPointer();
+        }
+        return (obj_ as any)[pointerLiteralSymbol];
+    },
+
+    clonePointer(obj_: InventoryLike): UniffiHandle {
+        const pointer = this.pointer(obj_);
+        return uniffiCaller.rustCall(
+            /*caller:*/ (callStatus) => nativeModule().ubrn_uniffi_inventory_core_fn_clone_inventory(pointer, callStatus),
+            /*liftString:*/ FfiConverterString.lift
+        );
+    },
+
+    freePointer(pointer: UniffiHandle): void {
+        uniffiCaller.rustCall(
+            /*caller:*/ (callStatus) => nativeModule().ubrn_uniffi_inventory_core_fn_free_inventory(pointer, callStatus),
+            /*liftString:*/ FfiConverterString.lift
+        );
+    },
+
+    isConcreteType(obj_: any): obj_ is InventoryLike {
+        return obj_[destructorGuardSymbol] && obj_[uniffiTypeNameSymbol] === "Inventory";
+    },
+}})();
+const FfiConverterTypeInventory = new FfiConverterObject(uniffiTypeInventoryObjectFactory);
+
 // FfiConverter for string | undefined
 const FfiConverterOptionalString = new FfiConverterOptional(FfiConverterString);
+
+// FfiConverter for Array<Item>
+const FfiConverterSequenceTypeItem = new FfiConverterArray(FfiConverterTypeItem);
+
+// FfiConverter for Array<string>
+const FfiConverterSequenceString = new FfiConverterArray(FfiConverterString);
+
+// FfiConverter for Item | undefined
+const FfiConverterOptionalTypeItem = new FfiConverterOptional(FfiConverterTypeItem);
 
 
 /**
@@ -228,11 +904,35 @@ function uniffiEnsureInitialized() {
     if (bindingsContractVersion !== scaffoldingContractVersion) {
         throw new UniffiInternalError.ContractVersionMismatch(scaffoldingContractVersion, bindingsContractVersion);
     }
+    if (nativeModule().ubrn_uniffi_inventory_core_checksum_func_parse_expiration_date() !== 41687) {
+        throw new UniffiInternalError.ApiChecksumMismatch("uniffi_inventory_core_checksum_func_parse_expiration_date");
+    }
     if (nativeModule().ubrn_uniffi_inventory_core_checksum_func_probe_models() !== 59958) {
         throw new UniffiInternalError.ApiChecksumMismatch("uniffi_inventory_core_checksum_func_probe_models");
     }
     if (nativeModule().ubrn_uniffi_inventory_core_checksum_func_self_check() !== 18724) {
         throw new UniffiInternalError.ApiChecksumMismatch("uniffi_inventory_core_checksum_func_self_check");
+    }
+    if (nativeModule().ubrn_uniffi_inventory_core_checksum_constructor_inventory_open() !== 34615) {
+        throw new UniffiInternalError.ApiChecksumMismatch("uniffi_inventory_core_checksum_constructor_inventory_open");
+    }
+    if (nativeModule().ubrn_uniffi_inventory_core_checksum_method_inventory_add_item() !== 29019) {
+        throw new UniffiInternalError.ApiChecksumMismatch("uniffi_inventory_core_checksum_method_inventory_add_item");
+    }
+    if (nativeModule().ubrn_uniffi_inventory_core_checksum_method_inventory_delete_item() !== 31193) {
+        throw new UniffiInternalError.ApiChecksumMismatch("uniffi_inventory_core_checksum_method_inventory_delete_item");
+    }
+    if (nativeModule().ubrn_uniffi_inventory_core_checksum_method_inventory_list_items() !== 10713) {
+        throw new UniffiInternalError.ApiChecksumMismatch("uniffi_inventory_core_checksum_method_inventory_list_items");
+    }
+    if (nativeModule().ubrn_uniffi_inventory_core_checksum_method_inventory_list_locations() !== 59393) {
+        throw new UniffiInternalError.ApiChecksumMismatch("uniffi_inventory_core_checksum_method_inventory_list_locations");
+    }
+    if (nativeModule().ubrn_uniffi_inventory_core_checksum_method_inventory_set_item_quantity() !== 15586) {
+        throw new UniffiInternalError.ApiChecksumMismatch("uniffi_inventory_core_checksum_method_inventory_set_item_quantity");
+    }
+    if (nativeModule().ubrn_uniffi_inventory_core_checksum_method_inventory_update_item() !== 60298) {
+        throw new UniffiInternalError.ApiChecksumMismatch("uniffi_inventory_core_checksum_method_inventory_update_item");
     }
 
     }
@@ -240,7 +940,12 @@ function uniffiEnsureInitialized() {
 export default Object.freeze({
   initialize: uniffiEnsureInitialized,
   converters: {
+    FfiConverterTypeInventory,
+    FfiConverterTypeInventoryError,
+    FfiConverterTypeItem,
+    FfiConverterTypeItemField,
     FfiConverterTypeModelProbe,
+    FfiConverterTypeNewItem,
     FfiConverterTypeSelfCheck,
   }
 });

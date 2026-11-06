@@ -67,11 +67,30 @@ interface NativeModuleInterface {
     ubrn_ffi_inventory_core_rust_future_cancel_void(handle: bigint): void;
     ubrn_ffi_inventory_core_rust_future_complete_void(handle: bigint, uniffi_out_err: UniffiRustCallStatus): void;
     ubrn_ffi_inventory_core_rust_future_free_void(handle: bigint): void;
+    ubrn_uniffi_inventory_core_fn_clone_inventory(ptr: bigint, uniffi_out_err: UniffiRustCallStatus): bigint;
+    ubrn_uniffi_inventory_core_fn_free_inventory(ptr: bigint, uniffi_out_err: UniffiRustCallStatus): void;
+    ubrn_uniffi_inventory_core_fn_func_parse_expiration_date(text: Uint8Array, today: Uint8Array, uniffi_out_err: UniffiRustCallStatus): Uint8Array;
     ubrn_uniffi_inventory_core_fn_func_probe_models(llamaPath: Uint8Array, whisperPath: Uint8Array, uniffi_out_err: UniffiRustCallStatus): Uint8Array;
     ubrn_uniffi_inventory_core_fn_func_self_check(uniffi_out_err: UniffiRustCallStatus): Uint8Array;
+    ubrn_uniffi_inventory_core_fn_constructor_inventory_open(path: Uint8Array, uniffi_out_err: UniffiRustCallStatus): bigint;
+    ubrn_uniffi_inventory_core_fn_method_inventory_add_item(uniffiSelf: bigint, item: Uint8Array, uniffi_out_err: UniffiRustCallStatus): Uint8Array;
+    ubrn_uniffi_inventory_core_fn_method_inventory_delete_item(uniffiSelf: bigint, id: bigint, uniffi_out_err: UniffiRustCallStatus): void;
+    ubrn_uniffi_inventory_core_fn_method_inventory_list_items(uniffiSelf: bigint, query: Uint8Array, uniffi_out_err: UniffiRustCallStatus): Uint8Array;
+    ubrn_uniffi_inventory_core_fn_method_inventory_list_locations(uniffiSelf: bigint, uniffi_out_err: UniffiRustCallStatus): Uint8Array;
+    ubrn_uniffi_inventory_core_fn_method_inventory_set_item_quantity(uniffiSelf: bigint, id: bigint, quantity: number, uniffi_out_err: UniffiRustCallStatus): Uint8Array;
+    ubrn_uniffi_inventory_core_fn_method_inventory_update_item(uniffiSelf: bigint, id: bigint, item: Uint8Array, uniffi_out_err: UniffiRustCallStatus): Uint8Array;
     ubrn_ffi_inventory_core_uniffi_contract_version(): number;
+    ubrn_uniffi_inventory_core_checksum_func_parse_expiration_date(): number;
     ubrn_uniffi_inventory_core_checksum_func_probe_models(): number;
     ubrn_uniffi_inventory_core_checksum_func_self_check(): number;
+    ubrn_uniffi_inventory_core_checksum_constructor_inventory_open(): number;
+    ubrn_uniffi_inventory_core_checksum_method_inventory_add_item(): number;
+    ubrn_uniffi_inventory_core_checksum_method_inventory_delete_item(): number;
+    ubrn_uniffi_inventory_core_checksum_method_inventory_list_items(): number;
+    ubrn_uniffi_inventory_core_checksum_method_inventory_list_locations(): number;
+    ubrn_uniffi_inventory_core_checksum_method_inventory_set_item_quantity(): number;
+    ubrn_uniffi_inventory_core_checksum_method_inventory_update_item(): number;
+    ubrn_uniffi_internal_fn_method_inventory_ffi__bless_pointer(pointer: bigint, uniffi_out_err: UniffiRustCallStatus): UniffiGcObject;
     // Codegen call sites use these via `nativeModule().rustbuffer_alloc(...)`
     // and `nativeModule().rustbuffer_free(...)`. The JSI host object exposes
     // them as properties; see `props["rustbuffer_alloc"]` / `props["rustbuffer_free"]`

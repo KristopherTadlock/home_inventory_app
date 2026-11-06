@@ -375,6 +375,8 @@ dependencies = [
  "duckling",
  "inference-sys",
  "rusqlite",
+ "tempfile",
+ "thiserror",
  "uniffi",
 ]
 
